@@ -1,0 +1,189 @@
+.mab-img{
+	width: 230px;
+}
+
+.mab-back{
+	background-color: #fafbfc;
+}
+
+.linea{
+	width: 100%; 
+   text-align: center; 
+   border-bottom: 1px solid #636363; 
+   line-height: 1px;
+   margin: 5px 0 10px; padding:1px 0px
+}
+
+
+form input{
+    margin-bottom: 15px !important;
+}
+
+form select{
+    margin-bottom: 15px !important;
+}
+
+.dt-buttons .btn{
+  margin-right: 10px !important;
+  border-radius: 10px !important;
+  background-color: rgba(255, 107, 11, 0.7) !important;
+  border-color: rgba(255, 102, 0, 0.8) !important;
+  color: white !important;
+}
+
+table.dataTable tr th{
+  font-size: 15px !important;
+  background-color: #343a40 !important;
+ /* border: 1px solid #dee2e6;*/
+  color: white !important;
+}
+
+table.dataTable td{
+  font-size: 15px !important;
+
+}
+table.dataTable{
+border-radius: 10px !important;
+}
+table.dataTable thead th:first-child {
+    border-left: none !important;
+    border-top-left-radius: 10px !important;
+    -webkit-border-top-left-radius: 10px !important;
+    -moz-border-radius-topleft: 10px !important;
+}
+table.dataTable thead th:last-child {
+    border-right: none !important;
+    border-top-right-radius: 10px !important;
+    -webkit-border-top-right-radius: 10px !important;
+    -moz-border-radius-topleft: 10px !important;
+}
+table.dataTable tfoot th:first-child {
+    border-left: none !important;
+    border-bottom-left-radius: 10px !important;
+    -webkit-border-bottom-left-radius: 10px !important;
+    -moz-border-radius-topleft: 10px !important;
+}
+table.dataTable tfoot th:last-child {
+    border-right: none !important;
+    border-bottom-right-radius: 10px !important;
+    -webkit-border-bottom-right-radius: 10px !important;
+    -moz-border-radius-topleft: 10px !important;
+}
+table.dataTable tbody button{
+  border-radius: 4px !important;
+  width: 30px !important;
+  height: 37px !important;
+}
+table.dataTable tbody button i{
+  margin-left : -5px !important;
+}
+.box .box-header .box-title{
+    font-weight: 10px !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+.box .box-header .titulo{
+  margin-left: 10px !important;
+}
+.box .box-header .box-title{
+    margin: 8px 10px 4px 4px !important;
+}
+.box .box-header{
+  margin-top: 10px !important;
+}
+
+table.dataTable tbody button{
+    margin-right: 4px !important;
+
+}
+table.dataTable tbody a{
+  border-radius: 3px !important;
+  width: 30px !important;
+  height: 37px !important;
+  margin-left: 4px !important;
+}
+#execute{
+    position: absolute;
+    bottom: 0;
+}
+
+table.dataTable tbody i.fa-eye:before{
+    margin-left: -3px !important;
+}
+
+table.dataTable tbody span.label{
+    padding: 3px !important;
+    border-radius: 3px !important;
+}
+
+.card-primary:not(.card-outline) > .card-header, .card-primary:not(.card-outline) > .card-header a {
+    color: black !important;
+}
+
+.dot {
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  display: inline-block;
+  
+}
+/*
+#lista_cal .fc-scroller{
+    height: 360px !important;
+}
+
+#calendar .fc-scroller{
+    height: 600px !important;
+}
+
+*/
+#lista_cal .fc-view-harness {
+    height: 360px !important;
+}
+
+#calendar .fc-view-harness {
+    height: 700px !important;
+}
+
+
+.rotate {
+  animation: rotation 1s linear 1;
+}
+
+@keyframes rotation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
+}
+
+.custom-control-input{
+    opacity: 1 !important;
+    position: absolute ;
+    z-index: auto !important;
+    vertical-align: middle;
+    margin-left: 5px;
+
+}
+
+#loading_modal{
+     background-color: rgba(77,154,176,00.1) !important;
+
+}
+
+
+#loading_modal .modal-content{
+background-color: rgba(77,154,176,.0001);
+box-shadow: 0 0rem 0rem rgb(0 0 0 / 0%) !important;
+border: 0px !important;
+}
+
+html{
+    font-size: 15px !important;
+}
+
+table.dataTable td {
+  font-size: 14px !important;
+}

@@ -1,0 +1,26 @@
+# .gitignore
+
+# System files
+.DS_Store
+Thumbs.db
+
+# PHPStorm / VSCode
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Environment files
+.env
+*.pem
+*.key
+*.crt
+
+# Vendor (optional — if using Composer)
+vendor/
+
+# Temporary or cache folders
+tmp/
+cache/
+global.php
