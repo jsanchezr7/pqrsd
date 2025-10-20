@@ -7,15 +7,49 @@ error_reporting(E_ALL);
 use Firebase\JWT\JWT;
 
 require_once "../extensiones/vendor/autoload.php";
-// echo json_encode($_SERVER['HTTP_AUTHORIZATION']);
-
-if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
-    header('HTTP/1.0 400 Bad Request');
-    echo 'Token not found in request';
-    exit;
+// Attempt to get Authorization header from several possible server variables
+$authHeader = null;
+// Try getallheaders() first (works on many servers)
+if (function_exists('getallheaders')) {
+	$headers = getallheaders();
+	if (!empty($headers['Authorization'])) {
+		$authHeader = $headers['Authorization'];
+	} elseif (!empty($headers['authorization'])) {
+		$authHeader = $headers['authorization'];
+	}
 }
 
-$jwt = $matches[1];
+// Fallbacks for different server setups
+if (empty($authHeader) && !empty($_SERVER['HTTP_AUTHORIZATION'])) {
+	$authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+}
+if (empty($authHeader) && !empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+	$authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+}
+
+$jwt = null;
+if (! empty($authHeader) && preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+	$jwt = $matches[1];
+}
+
+// If header not provided, try to get token from POST payload (token may be JSON string)
+if (empty($jwt) && isset($_POST['token'])) {
+	$postToken = $_POST['token'];
+	// token might be a JSON string containing { "JWT": "..." }
+	$decoded = json_decode($postToken, true);
+	if (is_array($decoded) && !empty($decoded['JWT'])) {
+		$jwt = $decoded['JWT'];
+	} elseif (!is_array($decoded) && is_string($postToken) && strlen($postToken) > 0) {
+		// If the token was sent directly as the JWT string
+		$jwt = $postToken;
+	}
+}
+
+if (! $jwt) {
+	header('HTTP/1.0 400 Bad Request');
+	echo 'Token not found in request';
+	exit;
+}
 if (! $jwt) {
     // No token was able to be extracted from the authorization header
     header('HTTP/1.0 400 Bad Request');
