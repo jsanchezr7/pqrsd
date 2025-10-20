@@ -23,33 +23,58 @@ use WindowsAzure\Blob\Models\ListBlobsOptions;
 
 // use WindowsAzure\Common\ServicesBuilder;
 
-// echo json_encode($_SERVER['HTTP_AUTHORIZATION']);
-if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
-    header('HTTP/1.0 400 Bad Request');
-    echo 'Token not found in request';
-    exit;
+// Load config for JWT secret
+require_once __DIR__ . "/../config/global.php";
+
+// Extract token from Authorization header or request body
+$authHeader = null;
+if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+	$authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+} elseif (isset($_SERVER['Authorization'])) {
+	$authHeader = $_SERVER['Authorization'];
+} elseif (function_exists('getallheaders')) {
+	$headers = getallheaders();
+	if (isset($headers['Authorization'])) {
+		$authHeader = $headers['Authorization'];
+	} elseif (isset($headers['authorization'])) {
+		$authHeader = $headers['authorization'];
+	}
+} elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+	$authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
 }
 
-$jwt = $matches[1];
+$jwt = null;
+if ($authHeader && preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+	$jwt = $matches[1];
+}
+
+if (! $jwt && isset($_REQUEST['token'])) {
+	$jwt = $_REQUEST['token'];
+}
+
 if (! $jwt) {
-    // No token was able to be extracted from the authorization header
-    header('HTTP/1.0 400 Bad Request');
-    exit;
+	$raw = file_get_contents('php://input');
+	$json = @json_decode($raw, true);
+	if (is_array($json) && isset($json['token'])) {
+		$jwt = $json['token'];
+	}
 }
 
-
-$secretKey = null;
-// Prefer the value defined in config/global.php, otherwise fall back to env
-if (defined('JWT_SECRET_KEY') && JWT_SECRET_KEY) {
-	$secretKey = JWT_SECRET_KEY;
-} elseif (getenv('JWT_SECRET') !== false) {
-	$secretKey = getenv('JWT_SECRET');
+if (! $jwt) {
+	header('HTTP/1.0 400 Bad Request');
+	echo json_encode(array('error' => 'Token not found in request'));
+	exit;
 }
+
+$secretKey = defined('JWT_SECRET_KEY') ? JWT_SECRET_KEY : (getenv('JWT_SECRET') !== false ? getenv('JWT_SECRET') : null);
 try {
 	$token = JWT::decode($jwt, $secretKey, ['HS512']);
 	unset($secretKey);
 } catch (Exception $e) {
-	echo $e->getMessage();
+	error_log('[upload.php] JWT decode error: ' . $e->getMessage());
+	header('HTTP/1.1 401 Unauthorized');
+	echo json_encode(array('error' => 'Signature verification failed'));
+	exit;
 }
 
 $now = new DateTimeImmutable();

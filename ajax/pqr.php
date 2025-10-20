@@ -15,26 +15,60 @@ ini_set('display_startup_errors', 0);
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
 
 require_once "../extensiones/vendor/autoload.php";
-// echo json_encode($_SERVER['HTTP_AUTHORIZATION']);
-if (! preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
-    header('HTTP/1.0 400 Bad Request');
-    echo 'Token not found in request';
-    exit;
+// Load project config (contains JWT_SECRET_KEY)
+require_once __DIR__ . "/../config/global.php";
+
+// Robust extraction of Authorization header / token from multiple sources
+$authHeader = null;
+if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+	$authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+} elseif (isset($_SERVER['Authorization'])) {
+	$authHeader = $_SERVER['Authorization'];
+} elseif (function_exists('getallheaders')) {
+	$headers = getallheaders();
+	if (isset($headers['Authorization'])) {
+		$authHeader = $headers['Authorization'];
+	} elseif (isset($headers['authorization'])) {
+		$authHeader = $headers['authorization'];
+	}
+} elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+	$authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
 }
 
-$jwt = $matches[1];
+$jwt = null;
+if ($authHeader && preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
+	$jwt = $matches[1];
+}
+
+// Fallbacks: token in request parameters or raw JSON body
+if (! $jwt && isset($_REQUEST['token'])) {
+	$jwt = $_REQUEST['token'];
+}
 if (! $jwt) {
-    // No token was able to be extracted from the authorization header
-    header('HTTP/1.0 400 Bad Request');
-    exit;
+	$raw = file_get_contents('php://input');
+	$json = @json_decode($raw, true);
+	if (is_array($json) && isset($json['token'])) {
+		$jwt = $json['token'];
+	}
 }
 
-$secretKey  = ';[wR77BmCt"y~jXL7M:wu{cPV|-*IwtA2!d%_K..4t`i0;:&SjPtqFSeiW#`7?d';
+if (! $jwt) {
+	header('HTTP/1.0 400 Bad Request');
+	echo json_encode(array('error' => 'Token not found in request'));
+	exit;
+}
+
+// Prefer configured secret key; keep legacy literal as a last-resort fallback
+$secretKey = defined('JWT_SECRET_KEY') ? JWT_SECRET_KEY : ';[wR77BmCt"y~jXL7M:wu{cPV|-*IwtA2!d%_K..4t`i0;:&SjPtqFSeiW#`7?d';
 try {
 	$token = JWT::decode($jwt, $secretKey, ['HS512']);
-		unset($secretKey); 
-}catch(Exception $e){
-	echo $e->getMessage();
+	unset($secretKey);
+} catch (Exception $e) {
+	// Log the detailed error server-side, but don't echo library messages to clients
+	error_log("[pqr.php] JWT decode error: " . $e->getMessage());
+	header('HTTP/1.1 401 Unauthorized');
+	echo json_encode(array('error' => 'Signature verification failed'));
+	exit;
 }
 
 $now = new DateTimeImmutable();
