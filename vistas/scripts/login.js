@@ -14,6 +14,8 @@ $("#frmAcceso").on('submit', async (e) => {
     }
   });
 
+  console.log(res)
+
 
   if (res.status >= 200 && res.status <= 299) {
     const jwt = await res.text();
