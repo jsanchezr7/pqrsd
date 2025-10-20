@@ -47,6 +47,9 @@ $("#frmAcceso").on('submit', async (e) => {
             }else{
                window.alert("Usuario y/o Password incorrectos");
             }
+        },
+        error: function (error) {
+            console.log(error);
         }
     });
 
