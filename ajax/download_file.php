@@ -7,6 +7,11 @@ session_start();
 
 use Firebase\JWT\JWT;
 
+// Prevent vendor deprecation notices from being printed to responses
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
+
 require_once "../extensiones/vendor/autoload.php";
 // echo json_encode($_SERVER['HTTP_AUTHORIZATION']);
 

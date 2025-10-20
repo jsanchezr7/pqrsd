@@ -2,9 +2,10 @@
 // declare(strict_types=1);
 
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// Prevent vendor deprecation notices from being printed to responses
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_WARNING);
 
 require_once "../extensiones/vendor/autoload.php";
 
