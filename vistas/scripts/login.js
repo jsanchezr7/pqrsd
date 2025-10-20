@@ -24,7 +24,7 @@ $("#frmAcceso").on('submit', async (e) => {
     logina=$("#logina").val();
     clavea=$("#clavea").val();
 
-
+    console.log('authorized')
     $.ajax({
         url: '../ajax/usuarios.php?op=verificar',
         type: 'POST',
@@ -39,6 +39,7 @@ $("#frmAcceso").on('submit', async (e) => {
         success: function (data) {
    
    
+            console.log(data)
             data = JSON.parse(data);
             console.log(data)
             if (data != undefined){
