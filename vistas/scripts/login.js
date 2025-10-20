@@ -38,6 +38,7 @@ $("#frmAcceso").on('submit', async (e) => {
    
    
             data = JSON.parse(data);
+            console.log(data)
             if (data != undefined){
                 $(location).attr("href","../vistas/pqr.php");
             }else{
