@@ -12,7 +12,7 @@ require_once "../extensiones/vendor/autoload.php";
 use Firebase\JWT\JWT;
 
 if (isset($_SERVER['HTTP_REFERER'])){
-	if ($_SERVER['HTTP_REFERER']==('https://aplicaciones.mab.com.co/pqr/vistas/login.php')||('https://pqrsd.metrodebogota.gov.co/vistas/login.php')){
+	if ($_SERVER['HTTP_REFERER']==('https://aplicaciones.mab.com.co/pqr/vistas/login.php')||('http://52.232.166.142/vistas/login.php')){
 		$secretKey  = ';[wR77BmCt"y~jXL7M:wu{cPV|-*IwtA2!d%_K..4t`i0;:&SjPtqFSeiW#`7?d';
 		$issuedAt   = new DateTimeImmutable();
 		$expire     = $issuedAt->modify('+60 minutes')->getTimestamp();      // Add 60 seconds
